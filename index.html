@@ -145,7 +145,7 @@
         <div class="ctrl-item"><span>Swap Weapon</span> <span class="ctrl-key">Q / 1, 2</span></div>
       </div>
 
-      <button id="btn-deploy" class="btn-tactical-primary">DEPLOY TO COMBAT</button>
+      <button id="btn-deploy" class="btn-tactical-primary" onclick="handleDeployCombat(event)" ontouchend="handleDeployCombat(event)">DEPLOY TO COMBAT</button>
     </div>
   </div>
 
@@ -170,7 +170,7 @@
         </div>
       </div>
 
-      <button id="btn-respawn" class="btn-tactical-primary">RESPAWN & REDEPLOY</button>
+      <button id="btn-respawn" class="btn-tactical-primary" onclick="handleRespawnCombat(event)" ontouchend="handleRespawnCombat(event)">RESPAWN & REDEPLOY</button>
     </div>
   </div>
 
@@ -182,5 +182,56 @@
   <script src="js/ai.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/game.js"></script>
+  <script>
+    window.handleDeployCombat = function(e) {
+      if (e) {
+        try { e.preventDefault(); } catch(err) {}
+        try { e.stopPropagation(); } catch(err) {}
+      }
+      const modal = document.getElementById('deploy-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
+
+      // Audio Context Resume on user gesture
+      if (window.Engine && window.Engine.Audio && window.Engine.Audio.init) {
+        window.Engine.Audio.init();
+        if (window.Engine.Audio.ctx && window.Engine.Audio.ctx.state === 'suspended') {
+          window.Engine.Audio.ctx.resume().catch(() => {});
+        }
+      }
+
+      // Start game loop
+      if (window.Game && window.Game.start) {
+        window.Game.start();
+      }
+
+      // Show touch controls on touch devices
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const touchContainer = document.getElementById('touch-controls-container');
+      if (touchContainer) {
+        touchContainer.style.display = isTouchDevice ? 'block' : 'none';
+      }
+      if (!isTouchDevice && window.Player && window.Player.requestPointerLock) {
+        window.Player.requestPointerLock();
+      }
+    };
+
+    window.handleRespawnCombat = function(e) {
+      if (e) {
+        try { e.preventDefault(); } catch(err) {}
+        try { e.stopPropagation(); } catch(err) {}
+      }
+      const modal = document.getElementById('game-over-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
+      if (window.Game && window.Game.restart) {
+        window.Game.restart();
+      }
+    };
+  </script>
 </body>
 </html>
