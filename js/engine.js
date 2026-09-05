@@ -882,13 +882,11 @@
       });
 
       // Translucent Skylight Glass
-      this.materials.skylightGlass = new THREE.MeshPhysicalMaterial({
+      this.materials.skylightGlass = new THREE.MeshStandardMaterial({
         color: 0x9ec7eb,
         transparent: true,
         opacity: 0.35,
-        roughness: 0.1,
-        transmission: 0.75,
-        thickness: 0.2
+        roughness: 0.1
       });
 
       // Volumetric Sunbeam Shaft
@@ -2390,10 +2388,15 @@
       this.camera.position.set(0, 1.8, 15);
 
       // 3. WebGLRenderer Setup
-      this.renderer = new THREE.WebGLRenderer({
+      const isCanvas = container && container.tagName === 'CANVAS';
+      const rendererConfig = {
         antialias: true,
         powerPreference: 'high-performance'
-      });
+      };
+      if (isCanvas) {
+        rendererConfig.canvas = container;
+      }
+      this.renderer = new THREE.WebGLRenderer(rendererConfig);
       this.renderer.setSize(width, height);
       this.renderer.setPixelRatio(typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1);
 
@@ -2406,7 +2409,7 @@
         this.renderer.outputEncoding = THREE.sRGBEncoding;
       }
 
-      if (container && container.appendChild) {
+      if (container && container.appendChild && !isCanvas) {
         container.appendChild(this.renderer.domElement);
       }
 

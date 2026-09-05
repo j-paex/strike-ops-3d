@@ -10,8 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Teko:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- 3D WebGL Canvas -->
-  <canvas id="game-canvas"></canvas>
+  <!-- 3D WebGL Canvas Container -->
+  <div id="game-container"></div>
 
   <!-- Tactical HUD Overlay -->
   <div id="hud-container">
@@ -107,7 +107,7 @@
       <div id="virtual-aim-zone"></div>
 
       <!-- Tactical Action Buttons -->
-      <button id="touch-btn-fire" class="touch-btn" aria-label="Fire">
+      <button id="touch-btn-fire" class="touch-btn touch-action-btn" aria-label="Fire">
         <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="9"/>
           <line x1="12" y1="3" x2="12" y2="7"/>
@@ -117,11 +117,11 @@
         </svg>
       </button>
 
-      <button id="touch-btn-ads" class="touch-btn" aria-label="Aim Down Sights">ADS</button>
-      <button id="touch-btn-reload" class="touch-btn" aria-label="Reload">⟳</button>
-      <button id="touch-btn-jump" class="touch-btn" aria-label="Jump">▲</button>
-      <button id="touch-btn-crouch" class="touch-btn" aria-label="Crouch">▼</button>
-      <button id="touch-btn-swap" class="touch-btn" aria-label="Swap Weapon">⇄</button>
+      <button id="touch-btn-ads" class="touch-btn touch-action-btn" aria-label="Aim Down Sights">ADS</button>
+      <button id="touch-btn-reload" class="touch-btn touch-action-btn" aria-label="Reload">⟳</button>
+      <button id="touch-btn-jump" class="touch-btn touch-action-btn" aria-label="Jump">▲</button>
+      <button id="touch-btn-crouch" class="touch-btn touch-action-btn" aria-label="Crouch">▼</button>
+      <button id="touch-btn-swap" class="touch-btn touch-action-btn" aria-label="Swap Weapon">⇄</button>
     </div>
   </div>
 
@@ -134,18 +134,18 @@
         Hostile PMC forces have seized the industrial staging compound. Neutralize enemy squads, detonate tactical explosive barrels, and eliminate incoming hostile waves.
       </p>
 
-      <div class="controls-guide-grid">
-        <div class="control-item"><span class="key-badge">WASD / Touch</span> Move</div>
-        <div class="control-item"><span class="key-badge">Mouse / Swipe</span> Aim & Look</div>
-        <div class="control-item"><span class="key-badge">L-Click / Fire</span> Shoot</div>
-        <div class="control-item"><span class="key-badge">R-Click / ADS</span> Aim Down Sights</div>
-        <div class="control-item"><span class="key-badge">Shift</span> Tactical Sprint</div>
-        <div class="control-item"><span class="key-badge">Space</span> Jump</div>
-        <div class="control-item"><span class="key-badge">R</span> Reload</div>
-        <div class="control-item"><span class="key-badge">1 / 2 / Q</span> Swap Weapon</div>
+      <div class="controls-grid">
+        <div class="ctrl-item"><span>Move</span> <span class="ctrl-key">WASD / Touch</span></div>
+        <div class="ctrl-item"><span>Aim</span> <span class="ctrl-key">Mouse / Drag</span></div>
+        <div class="ctrl-item"><span>Shoot</span> <span class="ctrl-key">L-Click / Fire</span></div>
+        <div class="ctrl-item"><span>Aim Down Sights</span> <span class="ctrl-key">R-Click / ADS</span></div>
+        <div class="ctrl-item"><span>Sprint</span> <span class="ctrl-key">Shift</span></div>
+        <div class="ctrl-item"><span>Jump</span> <span class="ctrl-key">Space</span></div>
+        <div class="ctrl-item"><span>Reload</span> <span class="ctrl-key">R / Reload</span></div>
+        <div class="ctrl-item"><span>Swap Weapon</span> <span class="ctrl-key">Q / 1, 2</span></div>
       </div>
 
-      <button id="btn-deploy" class="modal-action-btn">DEPLOY TO COMBAT</button>
+      <button id="btn-deploy" class="btn-tactical-primary">DEPLOY TO COMBAT</button>
     </div>
   </div>
 
@@ -155,22 +155,22 @@
       <h1 class="modal-title">KILLED IN ACTION</h1>
       <div class="modal-subtitle">MISSION CRITICAL FAILURE</div>
 
-      <div class="stats-summary-row">
+      <div class="stats-summary">
         <div class="stat-box">
-          <div class="stat-num" id="game-over-score">0</div>
+          <div class="stat-val" id="game-over-score">0</div>
           <div class="stat-label">SCORE</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num" id="game-over-kills">0</div>
-          <div class="stat-label">HOSTILES ELIMINATED</div>
+          <div class="stat-val" id="game-over-kills">0</div>
+          <div class="stat-label">KILLS</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num" id="game-over-headshots">0</div>
+          <div class="stat-val" id="game-over-headshots">0</div>
           <div class="stat-label">HEADSHOTS</div>
         </div>
       </div>
 
-      <button id="btn-respawn" class="modal-action-btn">RESPAWN & REDEPLOY</button>
+      <button id="btn-respawn" class="btn-tactical-primary">RESPAWN & REDEPLOY</button>
     </div>
   </div>
 

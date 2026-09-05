@@ -12,7 +12,7 @@ window.Game = (function() {
   function init() {
     clock = new THREE.Clock();
 
-    const canvas = document.getElementById('game-canvas');
+    const canvas = document.getElementById('game-container') || document.getElementById('game-canvas') || document.body;
     if (!canvas) {
       console.error('Missing #game-canvas element');
       return;
