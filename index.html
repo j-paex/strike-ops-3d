@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Strike Ops 3D: Modern Combat HTML5</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Teko:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- 3D WebGL Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Tactical HUD Overlay -->
+  <div id="hud-container">
+    <!-- Blood / Low Health Vignette -->
+    <div id="damage-vignette"></div>
+
+    <!-- Directional Bullet Indicators -->
+    <div id="damage-indicators"></div>
+
+    <!-- Center Tactical Crosshair -->
+    <div id="crosshair-container">
+      <div class="crosshair-tick top"></div>
+      <div class="crosshair-tick bottom"></div>
+      <div class="crosshair-tick left"></div>
+      <div class="crosshair-tick right"></div>
+      <div class="crosshair-dot"></div>
+    </div>
+
+    <!-- Hitmarker (Classic CoD 4-Diagonal Ticks & Skull) -->
+    <div id="hitmarker">
+      <div class="hitmarker-tick tl"></div>
+      <div class="hitmarker-tick tr"></div>
+      <div class="hitmarker-tick bl"></div>
+      <div class="hitmarker-tick br"></div>
+      <div id="hitmarker-skull">💀</div>
+    </div>
+
+    <!-- Minimap Radar Card (Top Left) -->
+    <div id="minimap-card">
+      <div class="minimap-header">
+        <span class="minimap-title">TACTICAL RADAR</span>
+        <span id="uav-status" class="uav-badge">ACTIVE</span>
+      </div>
+      <canvas id="minimap-canvas" width="160" height="160"></canvas>
+    </div>
+
+    <!-- Player Status & Health (Bottom Left) -->
+    <div id="player-status-card">
+      <div class="status-label">HEALTH // VITAL SIGNS</div>
+      <div class="health-bar-frame">
+        <div id="health-fill"></div>
+      </div>
+      <div class="health-meta">
+        <span class="rank-tag">SPEC-OPS // VIPER-1</span>
+        <span id="health-value">100</span>
+      </div>
+    </div>
+
+    <!-- Ammo & Weapon Display (Bottom Right) -->
+    <div id="ammo-display-card">
+      <div id="weapon-name">M4A1 TACTICAL</div>
+      <div class="ammo-digits-row">
+        <span id="clip-ammo">30</span>
+        <span class="ammo-slash">/</span>
+        <span id="reserve-ammo">120</span>
+      </div>
+      <div id="reload-indicator">
+        <div class="reload-label">RELOADING...</div>
+        <div class="reload-bar-frame">
+          <div id="reload-progress"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Killfeed Container (Top Right) -->
+    <div id="killfeed-container"></div>
+
+    <!-- Score & Elimination Popups (Center Screen) -->
+    <div id="score-feed-container"></div>
+
+    <!-- Wave Transition Banner -->
+    <div id="wave-banner">
+      <div id="wave-title">WAVE 1</div>
+      <div id="wave-subtitle">HOSTILE PMC SQUAD DETECTED</div>
+    </div>
+
+    <!-- Killstreak Ready Banner -->
+    <div id="killstreak-banner">
+      <div class="streak-icon">⚡</div>
+      <div id="killstreak-text">UAV RECON ONLINE</div>
+    </div>
+
+    <!-- Mobile / iPad Touch Controls Overlay -->
+    <div id="touch-controls-container">
+      <!-- Left Virtual Movement Joystick -->
+      <div id="virtual-joystick-zone">
+        <div id="joystick-base">
+          <div id="joystick-knob"></div>
+        </div>
+      </div>
+
+      <!-- Right Virtual Aim Zone -->
+      <div id="virtual-aim-zone"></div>
+
+      <!-- Tactical Action Buttons -->
+      <button id="touch-btn-fire" class="touch-btn" aria-label="Fire">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"/>
+          <line x1="12" y1="3" x2="12" y2="7"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+          <line x1="3" y1="12" x2="7" y2="12"/>
+          <line x1="17" y1="12" x2="21" y2="12"/>
+        </svg>
+      </button>
+
+      <button id="touch-btn-ads" class="touch-btn" aria-label="Aim Down Sights">ADS</button>
+      <button id="touch-btn-reload" class="touch-btn" aria-label="Reload">⟳</button>
+      <button id="touch-btn-jump" class="touch-btn" aria-label="Jump">▲</button>
+      <button id="touch-btn-crouch" class="touch-btn" aria-label="Crouch">▼</button>
+      <button id="touch-btn-swap" class="touch-btn" aria-label="Swap Weapon">⇄</button>
+    </div>
+  </div>
+
+  <!-- Start / Deploy Modal -->
+  <div id="deploy-modal" class="game-modal">
+    <div class="modal-content-card">
+      <h1 class="modal-title">STRIKE OPS 3D</h1>
+      <div class="modal-subtitle">TACTICAL BROWSER COMBAT // SECTOR 7</div>
+      <p class="modal-briefing">
+        Hostile PMC forces have seized the industrial staging compound. Neutralize enemy squads, detonate tactical explosive barrels, and eliminate incoming hostile waves.
+      </p>
+
+      <div class="controls-guide-grid">
+        <div class="control-item"><span class="key-badge">WASD / Touch</span> Move</div>
+        <div class="control-item"><span class="key-badge">Mouse / Swipe</span> Aim & Look</div>
+        <div class="control-item"><span class="key-badge">L-Click / Fire</span> Shoot</div>
+        <div class="control-item"><span class="key-badge">R-Click / ADS</span> Aim Down Sights</div>
+        <div class="control-item"><span class="key-badge">Shift</span> Tactical Sprint</div>
+        <div class="control-item"><span class="key-badge">Space</span> Jump</div>
+        <div class="control-item"><span class="key-badge">R</span> Reload</div>
+        <div class="control-item"><span class="key-badge">1 / 2 / Q</span> Swap Weapon</div>
+      </div>
+
+      <button id="btn-deploy" class="modal-action-btn">DEPLOY TO COMBAT</button>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="game-over-modal" class="game-modal hidden">
+    <div class="modal-content-card defeat">
+      <h1 class="modal-title">KILLED IN ACTION</h1>
+      <div class="modal-subtitle">MISSION CRITICAL FAILURE</div>
+
+      <div class="stats-summary-row">
+        <div class="stat-box">
+          <div class="stat-num" id="game-over-score">0</div>
+          <div class="stat-label">SCORE</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="game-over-kills">0</div>
+          <div class="stat-label">HOSTILES ELIMINATED</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="game-over-headshots">0</div>
+          <div class="stat-label">HEADSHOTS</div>
+        </div>
+      </div>
+
+      <button id="btn-respawn" class="modal-action-btn">RESPAWN & REDEPLOY</button>
+    </div>
+  </div>
+
+  <!-- Dependencies & Core Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/weapons.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
